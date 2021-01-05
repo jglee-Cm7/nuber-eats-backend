@@ -1,5 +1,10 @@
 node_modules
 
+logs
+*.logs
+npm-debug.log*
+
+
 .npm
 
 .env
