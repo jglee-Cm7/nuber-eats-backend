@@ -6,6 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import * as Joi from 'Joi';
+import { Podcast } from './entities/podcast.entity';
+import { Episode } from './entities/episode.entity';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import * as Joi from 'Joi';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize: true,
-      logging: true
+      synchronize: process.env.NODE_ENV !== 'prod',
+      logging: true,
+      entities: [Podcast, Episode]
     }),
     GraphQLModule.forRoot({
         autoSchemaFile: true,

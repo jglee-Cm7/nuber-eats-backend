@@ -18,6 +18,7 @@ export class CoreOutput {
 @ObjectType()
 export class PodcastOutput extends CoreOutput {
   @Field(type => Podcast, { nullable: true })
+  @IsOptional()
   podcast?: Podcast;
 }
 

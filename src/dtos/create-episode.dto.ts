@@ -1,14 +1,5 @@
-import { ArgsType, Field } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
-import { PodcastSearchDto } from './podcast.dto';
+import { InputType, OmitType } from '@nestjs/graphql';
+import { Episode } from '../entities/episode.entity';
 
-@ArgsType()
-export class CreateEpisodeDto extends PodcastSearchDto {
-    @Field(type => String)
-    @IsString()
-    title: string;
-
-    @Field(type => String)
-    @IsString()
-    context: string;
-}
+@InputType()
+export class CreateEpisodeDto extends OmitType(Episode, ['id'], InputType) {}

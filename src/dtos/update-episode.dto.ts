@@ -1,16 +1,20 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { IsOptional, IsString } from "class-validator";
-import { EpisodesSearchDto } from "./podcast.dto";
+import { Field, InputType, PartialType } from "@nestjs/graphql";
+import { IsNumber } from "class-validator";
+import { CreateEpisodeDto } from "./create-episode.dto";
 
-@ArgsType()
-export class UpdateEpisodeDto extends EpisodesSearchDto {
-    @Field(type => String, {nullable: true})
-    @IsString()
-    @IsOptional()
-    title?: string;
+@InputType()
+export class UpdateEpisodeInputType extends PartialType(CreateEpisodeDto) {}
 
-    @Field(type => String, {nullable: true})
-    @IsString()
-    @IsOptional()
-    context?: string;
+@InputType()
+export class UpdateEpisodeDto {
+  @Field(type => Number)
+  @IsNumber()
+  podcastId: number;
+
+  @Field(type => Number)
+  @IsNumber()
+  episodeId: number;
+
+  @Field(type => UpdateEpisodeInputType)
+  data: UpdateEpisodeInputType;
 }

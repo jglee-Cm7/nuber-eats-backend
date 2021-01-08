@@ -2,143 +2,214 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CoreOutput, EpisodesOutput, PodcastOutput } from '../dtos/output.dto';
 import { CreatePodcastDto } from '../dtos/create-podcast.dto';
 import { Podcast } from '../entities/podcast.entity';
-import { CreateEpisodeDto } from 'src/dtos/create-episode.dto';
-import { UpdatePotcastDto } from 'src/dtos/update-podcast.dto';
+import { Episode } from '../entities/episode.entity';
+import { CreateEpisodeDto } from '../dtos/create-episode.dto';
+import { UpdatePotcastDto } from '../dtos/update-podcast.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UpdateEpisodeDto } from 'src/dtos/update-episode.dto';
-import { EpisodesSearchDto } from 'src/dtos/podcast.dto';
 
 @Injectable()
 export class PodcastsService {
-    private podcasts: Podcast[] = [];
-    
-    getPodcasts(): Podcast[] {
-        return this.podcasts;
-    }
-    
-    getPodcast(podcastId: number): PodcastOutput  {
-        const podcast = this.podcasts.find(podcast => podcast.id === podcastId);
-        if(!podcast) {
-            return {
-                ok: false,
-                error: `Potcast with ID: ${podcastId} not found.`
-            }
-        }
-        
-        return {
-            ok: true,
-            podcast: podcast
-        }
-    }
-    
-    getEpisodes(podcastId: number): EpisodesOutput {
-        const podcast = this.podcasts.find(podcast => podcast.id === podcastId);
-        if(!podcast) {
-            return {
-                ok: false,
-                error: `Potcast with ID: ${podcastId} not found.`
-            };
-        }
-        
-        return {
-            ok: true,
-            episodes: podcast.episodes
-        };
+  constructor(
+    @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
+    @InjectRepository(Episode) private readonly episodes: Repository<Episode>) {}
+
+  //private podcasts: Podcast[] = [];
+  
+  async getPodcasts(): Promise<Podcast[]> {
+    const allOfPodcast = await this.podcasts.find();
+    for(let i=0; i<allOfPodcast.length; ++i) {
+      const podcast = allOfPodcast[i];
+      allOfPodcast[i].episodes = await this.episodes.find({podcast});
     }
 
-    getEpisode(podcastId: number, episodeId: number) {
-        const {ok, error, episodes } = this.getEpisodes(podcastId)
-        if(!ok) {
-            return { ok, error };
-        }
-        const episode = episodes.find(episode => episode.id == episodeId);
-        if(!episode) {
-            return {
-                ok: false,
-                error: `Episode with ID: ${episodeId} not found in Potcast ID ${podcastId}`
-            };
-        }
+    return allOfPodcast;
+  }
+  
+  async getPodcast(podcastId: number): Promise<PodcastOutput>  {
+    const podcast = await this.podcasts.findOne({id: podcastId});            
+    if(!podcast) {
         return {
-            ok: true,
-            episode
-        };
-    }
-    
-    createPodcast({ title, category, rating }: CreatePodcastDto): CoreOutput {
-        this.podcasts.push({
-            id: this.podcasts.length + 1,
-            title,
-            category,
-            rating,
-            episodes: []
-        });
-        return { ok: true, error: null };
-    }
-    
-    createEpisode({id, title, context}: CreateEpisodeDto): CoreOutput {
-        const podcast = this.podcasts.find(podcast => podcast.id === id);
-        if(!podcast) {
-            return {
-                ok: false,
-                error: `Potcast with ID: ${id} not found.`
-            }
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
         }
-        
-        podcast.episodes.push({
-            id: podcast.episodes.length + 1,
-            title,
-            context
-        })
-        return {
-            ok: true,
-            error: null
-        }
-    }
-    
-    deletePodcast(podcastId: number) {
-        const { ok, error } = this.getPodcast(podcastId);
-        if(!ok) {
-            return { ok, error };
-        }
-        this.podcasts = this.podcasts.filter(podcast => podcast.id !== podcastId);
-        return { ok: true };
-    }
-    
-    updatePodcast({ id, ...rest }: UpdatePotcastDto ): CoreOutput {
-        const {ok, error, podcast} = this.getPodcast(id);
-        if(!ok) {
-            return {ok, error};
-        }
-        this.podcasts = this.podcasts.filter(podcast => podcast.id !== id);
-        this.podcasts.push({...podcast, ...rest});
-        return { ok };
-    }
-    
-    deleteEpisode({podcastId, episodeId}: EpisodesSearchDto ) {
-        const { podcast, error, ok } = this.getPodcast(podcastId);
-        if(!ok) {
-            return {ok, error};
-        }
-        this.updatePodcast({
-            id: podcastId,
-            episodes: podcast.episodes.filter((episode) => episode.id !== episodeId),
-        })
-        return { ok: true };
     }
 
-    updateEpisode({podcastId, episodeId, ...rest}: UpdateEpisodeDto): CoreOutput {
-        const { podcast, error, ok } = this.getPodcast(podcastId);
-        if (!ok) {
-            return { ok, error };
-        }
-        const episodeIdx = podcast.episodes.findIndex(({ id }) => id === episodeId);
-        const newEpisode = { ...podcast.episodes[episodeIdx], ...rest };
-        this.deleteEpisode({ podcastId, episodeId });
-        const { podcast: changedPodcast } = this.getPodcast(podcastId);
-        this.updatePodcast({
-            id: podcastId,
-            episodes: [...changedPodcast.episodes, newEpisode],
-        });
-        return { ok: true };
-    }
+    const episodesOfPodcast = await this.episodes.find({podcast});
+    podcast.episodes = episodesOfPodcast;
     
+    return {
+        ok: true,
+        podcast: podcast
+    }
+  }
+  
+  async getEpisodes(podcastId: number): Promise<EpisodesOutput> {
+    const podcast = await this.podcasts.findOne({id: podcastId});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
+        };
+    }
+    const episodesOfPodcast = await this.episodes.find({podcast});
+    if(!episodesOfPodcast) {
+      return {
+          ok: false,
+          error: `episode with podcast ID: ${podcastId} not found.`
+      };
+    }
+
+    return {
+        ok: true,
+        episodes: episodesOfPodcast
+    };
+  }
+  
+  async createPodcast(createPodcastDto: CreatePodcastDto): Promise<CoreOutput> {
+    const newPodcast = this.podcasts.create(createPodcastDto);
+    if(!(await this.podcasts.save(newPodcast))) {
+      return {
+        ok: false,
+        error: `New Podcast Creation Error.`
+      }
+    }
+    console.log(newPodcast.episodes);
+    return { ok: true, error: null };
+  }
+  
+  async createEpisode(podcastId: number, createEpisodeDto: CreateEpisodeDto): Promise<CoreOutput> {
+    const podcast = await this.podcasts.findOne({id: podcastId});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
+        }
+    }
+
+    const episodesOfPodcast = await this.episodes.find({podcast: podcast});
+    console.log(`episode: ${episodesOfPodcast.length+1}`);
+    if(!episodesOfPodcast) {
+        return {
+            ok: false,
+            error: `Episode is undefined! [Potcast with ID: ${podcastId}]`
+        }
+    }
+
+    episodesOfPodcast.push({
+      id: episodesOfPodcast.length+1,
+      ...createEpisodeDto
+    })
+
+    podcast.episodes = episodesOfPodcast;
+
+    if(!(await this.episodes.save(podcast.episodes))) {
+      return {
+        ok: false,
+        error: `New Episodes Creation Error.`
+      }
+    }
+
+    if(!(await this.podcasts.save(podcast))) {
+      return {
+        ok: false,
+        error: `New Podcast Creation Error.`
+      }
+    }
+
+    return { ok: true, error: null };
+  }
+
+  async updatePodcast({id, data}: UpdatePotcastDto): Promise<CoreOutput> {
+    const podcast = await this.podcasts.findOne({id});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${id} not found.`
+        }
+    }
+
+    podcast.title = data.title !== undefined ? data.title : podcast.title;
+    podcast.category = data.category !== undefined ? data.category : podcast.category;
+    podcast.rating = data.rating !== undefined ? data.rating : podcast.rating;
+    podcast.episodes = data.episodes !== undefined ? data.episodes : podcast.episodes;
+
+    if(!(await this.podcasts.save(podcast))) {
+      return {
+        ok: false,
+        error: `Podcast Update Error.`
+      }
+    }
+
+    return { ok: true, error: null };
+  }
+
+  async updateEpisode({podcastId, episodeId, data}: UpdateEpisodeDto): Promise<CoreOutput> {
+    const podcast = await this.podcasts.findOne({id: podcastId});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
+        }
+    }
+
+    const episodeOfPodcast = await this.episodes.findOne({podcast: podcast, id:episodeId});
+    if(!episodeOfPodcast) {
+        return {
+            ok: false,
+            error: `Episode is undefined! [Potcast ID: ${podcastId}, Episode ID: ${episodeId}]`
+        }
+    }
+
+    episodeOfPodcast.title = data.title !== undefined ? data.title : episodeOfPodcast.title;
+    episodeOfPodcast.context = data.context !== undefined ? data.context : episodeOfPodcast.context;
+
+    if(!(await this.episodes.save(episodeOfPodcast))) {
+      return {
+        ok: false,
+        error: `Episode Update Error.`
+      }
+    }
+
+    return { ok: true, error: null };
+  }
+
+  
+  async deletePodcast(podcastId: number): Promise<CoreOutput> {
+    const podcast = await this.podcasts.findOne({id: podcastId});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
+        }
+    }
+
+    await this.podcasts.delete(podcastId);
+    return { ok: true };
+  }
+  
+  
+  async deleteEpisode(podcastId: number, episodeId: number): Promise<CoreOutput> {
+    const podcast = await this.podcasts.findOne({id: podcastId});
+    if(!podcast) {
+        return {
+            ok: false,
+            error: `Potcast with ID: ${podcastId} not found.`
+        }
+    }
+
+    const episodeOfPodcast = await this.episodes.findOne({podcast: podcast, id:episodeId});
+    if(!episodeOfPodcast) {
+        return {
+            ok: false,
+            error: `Episode is undefined! [Potcast ID: ${podcastId}, Episode ID: ${episodeId}]`
+        }
+    }
+
+    await this.episodes.delete(episodeId);
+    return { ok: true };
+  }
+  
 }
+
