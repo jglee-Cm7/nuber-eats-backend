@@ -69,13 +69,25 @@ export class PodcastsService {
   
   async createPodcast(createPodcastDto: CreatePodcastDto): Promise<CoreOutput> {
     const newPodcast = this.podcasts.create(createPodcastDto);
+    
+    for(let i=0; i<newPodcast.episodes.length; ++i) {
+      const newEpisode = newPodcast.episodes[i];
+      console.log(newEpisode);
+      if(!(await this.episodes.save(newEpisode))) {
+        return {
+          ok: false,
+          error: `Creation Error, New Episode of Potcast!`
+        }
+      }
+    }
+
     if(!(await this.podcasts.save(newPodcast))) {
       return {
         ok: false,
-        error: `New Podcast Creation Error.`
+        error: `Creation Error, New Podcast!`
       }
     }
-    console.log(newPodcast.episodes);
+
     return { ok: true, error: null };
   }
   
