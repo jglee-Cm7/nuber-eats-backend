@@ -1,11 +1,11 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { CreateEpisodeDto } from "../dtos/create-episode.dto";
-import { CreatePodcastDto } from "../dtos/create-podcast.dto";
-import { CoreOutput, EpisodesOutput, PodcastOutput } from "../dtos/output.dto";
-import { Podcast } from "../entities/podcast.entity";
+import { CreateEpisodeDto } from "./dtos/create-episode.dto";
+import { CreatePodcastDto } from "./dtos/create-podcast.dto";
+import { CoreOutput, EpisodesOutput, PodcastOutput } from "./dtos/output.dto";
+import { Podcast } from "./entities/podcast.entity";
 import { PodcastsService } from "./podcasts.service";
-import { UpdatePotcastDto } from "../dtos/update-podcast.dto";
-import { UpdateEpisodeDto } from "../dtos/update-episode.dto";
+import { UpdatePotcastDto } from "./dtos/update-podcast.dto";
+import { UpdateEpisodeDto } from "./dtos/update-episode.dto";
 
 @Resolver(Of => Podcast)
 export class PodcastsResolver {

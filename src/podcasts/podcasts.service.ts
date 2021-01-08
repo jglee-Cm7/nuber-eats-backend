@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CoreOutput, EpisodesOutput, PodcastOutput } from '../dtos/output.dto';
-import { CreatePodcastDto } from '../dtos/create-podcast.dto';
-import { Podcast } from '../entities/podcast.entity';
-import { Episode } from '../entities/episode.entity';
-import { CreateEpisodeDto } from '../dtos/create-episode.dto';
-import { UpdatePotcastDto } from '../dtos/update-podcast.dto';
+import { CoreOutput, EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import { CreatePodcastDto } from './dtos/create-podcast.dto';
+import { Podcast } from './entities/podcast.entity';
+import { Episode } from './entities/episode.entity';
+import { CreateEpisodeDto } from './dtos/create-episode.dto';
+import { UpdatePotcastDto } from './dtos/update-podcast.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdateEpisodeDto } from 'src/dtos/update-episode.dto';
+import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 
 @Injectable()
 export class PodcastsService {

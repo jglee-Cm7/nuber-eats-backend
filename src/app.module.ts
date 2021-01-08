@@ -6,8 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import * as Joi from 'Joi';
-import { Podcast } from './entities/podcast.entity';
-import { Episode } from './entities/episode.entity';
+import { Podcast } from './podcasts/entities/podcast.entity';
+import { Episode } from './podcasts/entities/episode.entity';
 
 @Module({
   imports: [
