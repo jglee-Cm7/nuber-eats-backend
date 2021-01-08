@@ -8,7 +8,7 @@ npm-debug.log*
 .npm
 
 .env
-
+.env.dev
 .env.test
 
 .nuxt
