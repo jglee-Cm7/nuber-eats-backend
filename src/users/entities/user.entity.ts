@@ -3,13 +3,12 @@ import { BeforeInsert, Column, Entity } from "typeorm";
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import * as bcrypt from "bcrypt";
 import { InternalServerErrorException } from "@nestjs/common";
-import { IsEmail, IsEnum, IsString } from "class-validator";
+import { IsEmail, IsEnum } from "class-validator";
 
 // TypeScript Enum 적용
 enum UserRole {
-  Client,
-  Owner,
-  Delivery,
+  Host,
+  Listener,
 }
 
 // GraphQL Enum 적용
