@@ -4,13 +4,15 @@ import { Repository } from "typeorm";
 import { CreateAccountInput } from "./dtos/create-account.dto";
 import { LoginInput } from "./dtos/login.dto";
 import { User } from "./entities/user.entity";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "../jwt/jwt.service";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly jwtService: JwtService,
     ) {}
-
 
 
   async createAccount({email, password, role}: CreateAccountInput): Promise<{ok: boolean, error?: string}> {
@@ -29,8 +31,6 @@ export class UsersService {
   async login({email, password}: LoginInput): Promise<{ok: boolean, error?: string, token?: string}> {
     // find the user with the email
     // check if the password is correct
-    // make a JWT and give it to the user
-
     try {
       const user = await this.users.findOne({ email });
       if(!user) {
@@ -40,7 +40,11 @@ export class UsersService {
       if(!passwordCorrect) {
         return {ok: false, error: 'Wrong password'};
       }
-      return {ok: true, token: 'test token'};
+
+      // make a JWT and give it to the user
+      // const token = jwt.sign({id: user.id}, this.config.get('PRIVATE_KEY'));
+      const token= this.jwtService.sign({id: user.id});
+      return {ok: true, token};
     } catch (error) {
       return {ok: false, error}
     }
