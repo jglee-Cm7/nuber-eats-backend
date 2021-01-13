@@ -1,4 +1,4 @@
-import { CoreEntity } from "../../common/entities/core.enities";
+import { CoreEntity } from "../../common/entities/core.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import * as bcrypt from "bcrypt";
