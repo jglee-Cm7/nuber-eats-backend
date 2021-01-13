@@ -9,7 +9,6 @@ import * as Joi from 'Joi';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
 import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
@@ -43,13 +42,15 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     }),
     GraphQLModule.forRoot({
         autoSchemaFile: true,
+        // 매 HTTP Request 마다 context function이 수행되서 
+        // HTTP Request 를 GraphQL Resolver 에서 접근가능하다. apollo server 내부 기능
+        context: ({ req }) => ({ user: req['user'] }),
     }),
     JwtModule.forRoot({
       privateKey:process.env.PRIVATE_KEY,
     }),
     PodcastsModule,
     UsersModule,
-    CommonModule,
     ],
   controllers: [AppController],
   providers: [AppService],
