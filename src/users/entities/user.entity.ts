@@ -23,7 +23,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field(type => String)
   password: string;
 
@@ -32,15 +32,21 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field(type => Boolean)
+  verified: boolean;
+
   // TypeORM Listener! (user.save() 에서 instance를 DB에 저장하기 전에 수행됨.)
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch(e) {
-      console.log(e);
-      throw new InternalServerErrorException();
+    if(this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch(e) {
+        console.log(e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 
