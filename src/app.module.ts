@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,7 +33,7 @@ import { Verification } from './users/entities/verification.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
-      })
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -39,20 +44,20 @@ import { Verification } from './users/entities/verification.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [Podcast, Episode, User, Verification]
+      entities: [Podcast, Episode, User, Verification],
     }),
     GraphQLModule.forRoot({
-        autoSchemaFile: true,
-        // 매 HTTP Request 마다 context function이 수행되서 
-        // HTTP Request 를 GraphQL Resolver 에서 접근가능하다. apollo server 내부 기능
-        context: ({ req }) => ({ user: req['user'] }),
+      autoSchemaFile: true,
+      // 매 HTTP Request 마다 context function이 수행되서
+      // HTTP Request 를 GraphQL Resolver 에서 접근가능하다. apollo server 내부 기능
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     JwtModule.forRoot({
-      privateKey:process.env.PRIVATE_KEY,
+      privateKey: process.env.PRIVATE_KEY,
     }),
     PodcastsModule,
     UsersModule,
-    ],
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
