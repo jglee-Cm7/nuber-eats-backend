@@ -52,6 +52,7 @@ import { Verification } from './users/entities/verification.entity';
       entities: [Podcast, Episode, User, Verification],
     }),
     GraphQLModule.forRoot({
+      playground: true, // process.env.NODE_ENV !== 'production',
       autoSchemaFile: true,
       // 매 HTTP Request 마다 context function이 수행되서
       // HTTP Request 를 GraphQL Resolver 에서 접근가능하다. apollo server 내부 기능
