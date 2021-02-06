@@ -1,27 +1,27 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { IsNumber, IsString } from "class-validator";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Podcast } from "./podcast.entity";
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsNumber, IsString } from 'class-validator';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Podcast } from './podcast.entity';
 
 @InputType('EpisodeInput')
 @ObjectType('EpisodeType')
 @Entity()
 export class Episode {
   @PrimaryGeneratedColumn()
-  @Field(type => Number)
+  @Field((type) => Number)
   @IsNumber()
   id: number;
 
   @Column()
-  @Field(type => String)
+  @Field((type) => String)
   @IsString()
   title: string;
 
   @Column()
-  @Field(type => String)
+  @Field((type) => String)
   @IsString()
-  context: string;
+  description: string;
 
-  @ManyToOne(() => Podcast, podcast => podcast.episodes)
+  @ManyToOne(() => Podcast, (podcast) => podcast.episodes)
   podcast: Podcast;
 }
