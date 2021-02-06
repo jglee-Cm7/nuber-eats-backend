@@ -10,7 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PodcastsModule } from './podcasts/podcasts.module';
-import * as Joi from 'Joi';
+import * as Joi from 'joi';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
 import { UsersModule } from './users/users.module';
