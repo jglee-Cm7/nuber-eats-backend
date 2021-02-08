@@ -48,7 +48,10 @@ import { Verification } from './users/entities/verification.entity';
           }),
       synchronize: true, //process.env.NODE_ENV !== 'production',
       logging: true,
-      // ssl: { rejectUnauthorized: false },
+      ssl: {
+        rejectUnauthorized:
+          process.env.NODE_ENV === 'production' ? false : true,
+      },
       entities: [Podcast, Episode, User, Verification],
     }),
     GraphQLModule.forRoot({

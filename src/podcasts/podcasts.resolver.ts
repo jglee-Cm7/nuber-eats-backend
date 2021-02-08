@@ -16,7 +16,7 @@ import { CoreOutput } from '../common/dtos/output.dto';
 export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
-  @Query((returns) => [Podcast])
+  @Query((returns) => GetAllPodcastsOutput)
   async getAllPodcasts(): Promise<GetAllPodcastsOutput> {
     return this.podcastsService.getPodcasts();
   }

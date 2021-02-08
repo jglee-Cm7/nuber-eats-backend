@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Podcast } from './podcast.entity';
 
 @InputType('EpisodeInput')
-@ObjectType('EpisodeType')
+@ObjectType()
 @Entity()
 export class Episode extends CoreEntity {
   @Column()
