@@ -1,16 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Episode } from './episode.entity';
 
 @ObjectType()
 @Entity()
-export class Podcast {
-  @PrimaryGeneratedColumn()
-  @Field((type) => Number)
-  @IsNumber()
-  id: number;
-
+export class Podcast extends CoreEntity {
   @Column()
   @Field((type) => String)
   @IsString()

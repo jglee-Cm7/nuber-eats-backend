@@ -1,7 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateEpisodeDto } from './dtos/create-episode.dto';
 import { CreatePodcastDto } from './dtos/create-podcast.dto';
-import { EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import {
+  EpisodesOutput,
+  GetAllPodcastsOutput,
+  PodcastOutput,
+} from './dtos/output.dto';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
 import { UpdatePotcastDto } from './dtos/update-podcast.dto';
@@ -13,7 +17,7 @@ export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
   @Query((returns) => [Podcast])
-  async getAllPodcasts(): Promise<Podcast[]> {
+  async getAllPodcasts(): Promise<GetAllPodcastsOutput> {
     return this.podcastsService.getPodcasts();
   }
 

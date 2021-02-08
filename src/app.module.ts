@@ -48,16 +48,16 @@ import { Verification } from './users/entities/verification.entity';
           }),
       synchronize: true, //process.env.NODE_ENV !== 'production',
       logging: true,
-      ssl: { rejectUnauthorized: false },
+      // ssl: { rejectUnauthorized: false },
       entities: [Podcast, Episode, User, Verification],
     }),
     GraphQLModule.forRoot({
       playground: true, // process.env.NODE_ENV !== 'production',
+      introspection: true,
       autoSchemaFile: true,
       // 매 HTTP Request 마다 context function이 수행되서
       // HTTP Request 를 GraphQL Resolver 에서 접근가능하다. apollo server 내부 기능
       context: ({ req }) => ({ user: req['user'] }),
-      introspection: true,
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,

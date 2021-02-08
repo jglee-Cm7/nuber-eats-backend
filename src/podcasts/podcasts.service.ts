@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import {
+  EpisodesOutput,
+  GetAllPodcastsOutput,
+  PodcastOutput,
+} from './dtos/output.dto';
 import { CreatePodcastDto } from './dtos/create-podcast.dto';
 import { Podcast } from './entities/podcast.entity';
 import { Episode } from './entities/episode.entity';
@@ -17,16 +21,21 @@ export class PodcastsService {
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
   ) {}
 
-  //private podcasts: Podcast[] = [];
+  private readonly InternalServerErrorOutput = {
+    ok: false,
+    error: 'Internal server error occurred.',
+  };
 
-  async getPodcasts(): Promise<Podcast[]> {
-    const allOfPodcast = await this.podcasts.find();
-    for (let i = 0; i < allOfPodcast.length; ++i) {
-      const podcast = allOfPodcast[i];
-      allOfPodcast[i].episodes = await this.episodes.find({ podcast });
+  async getPodcasts(): Promise<GetAllPodcastsOutput> {
+    try {
+      const podcasts = await this.podcasts.find();
+      return {
+        ok: true,
+        podcasts,
+      };
+    } catch (e) {
+      return this.InternalServerErrorOutput;
     }
-
-    return allOfPodcast;
   }
 
   async getPodcast(podcastId: number): Promise<PodcastOutput> {
