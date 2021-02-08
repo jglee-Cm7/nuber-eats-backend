@@ -1,17 +1,26 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsNumber } from 'class-validator';
-import { CreatePodcastDto } from './create-podcast.dto';
+import { Field, InputType, PartialType, PickType } from '@nestjs/graphql';
+import { Podcast } from '../entities/podcast.entity';
 
+// @InputType()
+// export class UpdatePodcastInputType extends PartialType(CreatePodcastDto) {}
+
+// @InputType()
+// export class UpdatePotcastDto {
+//   @Field(type => Number)
+//   @IsNumber()
+//   id: number;
+
+//   @Field(type => UpdatePodcastInputType)
+//   data: UpdatePodcastInputType;
+// }
 
 @InputType()
-export class UpdatePodcastInputType extends PartialType(CreatePodcastDto) {}
+export class UpdatePodcastPayload extends PartialType(
+  PickType(Podcast, ['title', 'category', 'description', 'rating'], InputType),
+) {}
 
 @InputType()
-export class UpdatePotcastDto {
-  @Field(type => Number)
-  @IsNumber()
-  id: number;
-
-  @Field(type => UpdatePodcastInputType)
-  data: UpdatePodcastInputType;
+export class UpdatePodcastInput extends PickType(Podcast, ['id'], InputType) {
+  @Field((type) => UpdatePodcastPayload)
+  payload: UpdatePodcastPayload;
 }

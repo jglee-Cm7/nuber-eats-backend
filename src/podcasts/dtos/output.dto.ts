@@ -22,3 +22,7 @@ export class EpisodesOutput extends CoreOutput {
   @Field((type) => [Episode], { nullable: true })
   episodes?: Episode[];
 }
+
+export class EpisodeOutput extends CoreOutput {
+  episode?: Episode;
+}

@@ -17,15 +17,17 @@ export class Podcast extends CoreEntity {
   @IsString()
   category: string;
 
-  @Column()
-  @Field((type) => String)
+  @Column({ nullable: true })
+  @Field((type) => String, { nullable: true })
   @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 
-  @Column()
-  @Field((type) => String)
+  @Column({ nullable: true })
+  @Field((type) => String, { nullable: true })
   @IsString()
-  coverImg: string;
+  @IsOptional()
+  coverImg?: string;
 
   // TypeORM Default Value Setting
   @Column({ default: 0 })

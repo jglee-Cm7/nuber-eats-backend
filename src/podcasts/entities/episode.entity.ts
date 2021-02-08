@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Podcast } from './podcast.entity';
@@ -14,9 +14,10 @@ export class Episode extends CoreEntity {
   title: string;
 
   @Column()
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @ManyToOne(() => Podcast, (podcast) => podcast.episodes)
   podcast: Podcast;

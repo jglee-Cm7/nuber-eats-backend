@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateEpisodeDto } from './dtos/create-episode.dto';
-import { CreatePodcastDto } from './dtos/create-podcast.dto';
+import { CreateEpisodeInput } from './dtos/create-episode.dto';
+import { CreatePodcastInput } from './dtos/create-podcast.dto';
 import {
   EpisodesOutput,
   GetAllPodcastsOutput,
@@ -8,8 +8,8 @@ import {
 } from './dtos/output.dto';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
-import { UpdatePotcastDto } from './dtos/update-podcast.dto';
-import { UpdateEpisodeDto } from './dtos/update-episode.dto';
+import { UpdatePodcastInput } from './dtos/update-podcast.dto';
+import { UpdateEpisodeInput } from './dtos/update-episode.dto';
 import { CoreOutput } from '../common/dtos/output.dto';
 
 @Resolver((Of) => Podcast)
@@ -32,8 +32,8 @@ export class PodcastsResolver {
   }
 
   @Mutation((returns) => CoreOutput)
-  async createPotcast(
-    @Args('input') podcastData: CreatePodcastDto,
+  async createPodcast(
+    @Args('input') podcastData: CreatePodcastInput,
   ): Promise<CoreOutput> {
     return this.podcastsService.createPodcast(podcastData);
   }
@@ -41,20 +41,20 @@ export class PodcastsResolver {
   @Mutation((returns) => CoreOutput)
   async createEpisode(
     @Args('id') podcastId: number,
-    @Args('input') episodeData: CreateEpisodeDto,
+    @Args('input') episodeData: CreateEpisodeInput,
   ): Promise<CoreOutput> {
     return this.podcastsService.createEpisode(podcastId, episodeData);
   }
 
   @Mutation((returns) => CoreOutput)
-  async updatePotcast(
-    @Args('input') updatePotcastDto: UpdatePotcastDto,
+  async updatePodcast(
+    @Args('input') updatePotcastDto: UpdatePodcastInput,
   ): Promise<CoreOutput> {
     return this.podcastsService.updatePodcast(updatePotcastDto);
   }
 
   @Mutation((returns) => CoreOutput)
-  async deletePotcast(@Args('id') podcastId: number): Promise<CoreOutput> {
+  async deletePodcast(@Args('id') podcastId: number): Promise<CoreOutput> {
     return this.podcastsService.deletePodcast(podcastId);
   }
 
@@ -68,7 +68,7 @@ export class PodcastsResolver {
 
   @Mutation((returns) => CoreOutput)
   async updateEpisode(
-    @Args('input') updateEpisodeDto: UpdateEpisodeDto,
+    @Args('input') updateEpisodeDto: UpdateEpisodeInput,
   ): Promise<CoreOutput> {
     return this.podcastsService.updateEpisode(updateEpisodeDto);
   }
