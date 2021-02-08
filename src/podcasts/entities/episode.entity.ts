@@ -13,7 +13,7 @@ export class Episode extends CoreEntity {
   @IsString()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Field((type) => String, { nullable: true })
   @IsString()
   @IsOptional()
